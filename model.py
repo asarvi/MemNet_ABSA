@@ -286,7 +286,7 @@ class MemN2N(object):
 
     def run(self, train_data, test_data):
       print('training...')
-      self.sess.run([tf.global_variables_initializer(), ,tf.tables_initializer()])
+      self.sess.run([tf.global_variables_initializer(), tf.tables_initializer()])
       self.sess.run(self.A.assign(self.pre_trained_context_wt))
       self.sess.run(self.ASP.assign(self.pre_trained_target_wt))
 
@@ -300,7 +300,7 @@ class MemN2N(object):
 
     def run_prediction(self, data, ckpt_name, output_path):
       print('predicting...')
-      self.sess.run([tf.global_variables_initializer(), ,tf.tables_initializer()])
+      self.sess.run([tf.global_variables_initializer(), tf.tables_initializer()])
       self.sess.run(self.A.assign(self.pre_trained_context_wt))
       self.sess.run(self.ASP.assign(self.pre_trained_target_wt))
 
