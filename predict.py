@@ -26,6 +26,8 @@ flags.DEFINE_boolean("show", False, "print progress [False]")
 flags.DEFINE_string("ckpt_name","", "e.x. model.ckpt-1000")
 flags.DEFINE_string("output_path","", "e.x. output.txt")
 flags.DEFINE_integer("pad_idx", 0, "")
+flags.DEFINE_integer("nwords", 0, "")
+flags.DEFINE_integer("mem_size", 0,"")
 
 FLAGS = flags.FLAGS
 

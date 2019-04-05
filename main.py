@@ -27,6 +27,8 @@ flags.DEFINE_string("model_dir", 'trained_model',"")
 flags.DEFINE_integer("save_steps", 1000, "")
 flags.DEFINE_integer("max_ckpt_to_keep", 100, "")
 flags.DEFINE_integer("pad_idx", 0, "")
+flags.DEFINE_integer("nwords", 0, "")
+flags.DEFINE_integer("mem_size", 0,"")
 
 FLAGS = flags.FLAGS
 
