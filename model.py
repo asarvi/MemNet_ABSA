@@ -9,7 +9,7 @@ import time as tim
 import os
 
 class MemN2N(object):
-    def __init__(self, config, sess):
+    def __init__(self, config, sess, pre_trained_context_wt, pre_trained_target_wt):
         self.nwords = config.nwords
         self.init_hid = config.init_hid
         self.init_std = config.init_std
@@ -21,8 +21,8 @@ class MemN2N(object):
         self.lindim = config.lindim
         self.max_grad_norm = config.max_grad_norm
         self.pad_idx = config.pad_idx
-        self.pre_trained_context_wt = config.pre_trained_context_wt
-        self.pre_trained_target_wt = config.pre_trained_target_wt
+        self.pre_trained_context_wt = pre_trained_context_wt
+        self.pre_trained_target_wt = pre_trained_target_wt
 
         self.input = tf.placeholder(tf.int32, [self.batch_size, 1], name="input")
         self.time = tf.placeholder(tf.int32, [None, self.mem_size], name="time")
