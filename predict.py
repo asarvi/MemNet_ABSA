@@ -59,6 +59,7 @@ def main(_):
     model = MemN2N(FLAGS, None, pre_trained_context_wt, pre_trained_target_wt)
     model.build_model()
     with tf.Session() as sess:
+      model.sess = sess
       model.predict(data, FLAGS.ckpt_name, FLAGS.output_path)  
 
 if __name__ == '__main__':
