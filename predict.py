@@ -20,8 +20,8 @@ flags.DEFINE_float("init_hid", 0.1, "initial internal state value [0.1]")
 flags.DEFINE_float("init_std", 0.01, "weight initialization std [0.05]")
 flags.DEFINE_float("max_grad_norm", 100, "clip gradients to this norm [50]")
 flags.DEFINE_string("pretrain_file", "data/glove.840B.300d.txt", "pre-trained glove vectors file path [../data/glove.6B.300d.txt]")
-flags.DEFINE_string("data", "data/Laptops_Test_Gold.xml.seg", "in test data format")
-flags.DEFINE_string("test_data", "data/Laptops_Test_Gold.xml.seg", "test gold data set path [./data/Laptops_Test_Gold.xml.seg]")
+flags.DEFINE_string("train_data", "data/Laptops_Train.xml.seg", "train gold data set path [./data/Laptops_Train.xml.seg]")
+flags.DEFINE_string("data", "data/Laptops_Test_Gold.xml.seg", "test gold data set path [./data/Laptops_Test_Gold.xml.seg]")
 flags.DEFINE_boolean("show", False, "print progress [False]")
 flags.DEFINE_string("model_dir", 'trained_model',"")
 flags.DEFINE_integer("save_steps", 1000, "")
@@ -39,14 +39,17 @@ def main(_):
   source_word2idx, target_word2idx, word_set = {}, {}, {}
   max_sent_len = -1
   
+  max_sent_len = get_dataset_resources(FLAGS.train_data, source_word2idx, target_word2idx, word_set, max_sent_len)
   max_sent_len = get_dataset_resources(FLAGS.data, source_word2idx, target_word2idx, word_set, max_sent_len)
   embeddings = load_embedding_file(FLAGS.pretrain_file, word_set)
 
+  train_data = get_dataset(FLAGS.train_data, source_word2idx, target_word2idx, embeddings)
   data = get_dataset(FLAGS.data, source_word2idx, target_word2idx, embeddings)
 
-  print "data size - ", len(data[0])
-  print "max sentence length - ",max_sent_len
+  print "train data size - ", len(train_data[0])
+  print "test data size - ", len(data[0])
 
+  print "max sentence length - ",max_sent_len
   FLAGS.pad_idx = source_word2idx['<pad>']
   FLAGS.nwords = len(source_word2idx)
   FLAGS.mem_size = max_sent_len
