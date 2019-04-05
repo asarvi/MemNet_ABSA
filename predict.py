@@ -25,7 +25,7 @@ flags.DEFINE_string("test_data", "data/Laptops_Test_Gold.xml.seg", "test gold da
 flags.DEFINE_boolean("show", False, "print progress [False]")
 flags.DEFINE_string("ckpt_name","", "e.x. model.ckpt-1000")
 flags.DEFINE_string("output_path","", "e.x. output.txt")
-flags.DEFINE_integer("pad_idx", 0)
+flags.DEFINE_integer("pad_idx", 0, "")
 
 FLAGS = flags.FLAGS
 
