@@ -26,6 +26,7 @@ flags.DEFINE_boolean("show", False, "print progress [False]")
 flags.DEFINE_string("model_dir", 'trained_model',"")
 flags.DEFINE_integer("save_steps", 1000, "")
 flags.DEFINE_integer("max_ckpt_to_keep", 100, "")
+flags.DEFINE_string("pad_idx", 0)
 
 FLAGS = flags.FLAGS
 
