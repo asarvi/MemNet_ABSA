@@ -181,7 +181,7 @@ class MemN2N(object):
 
         if self.step % self.save_step == 0:
           print 'Saving checkpoint...'
-          self.saver.save(sess, os.path.join(self.model_dir, 'model.ckpt'), global_step=self.step)
+          self.saver.save(self.sess, os.path.join(self.model_dir, 'model.ckpt'), global_step=self.step)
        
         if idx%500 == 0:
             print "loss - ", loss
