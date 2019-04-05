@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 from past.builtins import xrange
 import time as tim
+import os
 
 class MemN2N(object):
     def __init__(self, config, sess):
@@ -43,6 +44,11 @@ class MemN2N(object):
         self.sess = sess
         self.log_loss = []
         self.log_perp = []
+        
+        self.max_to_keep = config.max_ckpt_to_keep
+        self.model_dir = config.model_dir
+        self.save_step = config.save_steps
+        
 
     def build_memory(self):
       self.global_step = tf.Variable(0, name="global_step")
@@ -121,11 +127,13 @@ class MemN2N(object):
       with tf.control_dependencies([inc]):
           self.optim = self.opt.apply_gradients(clipped_grads_and_vars)
 
-      tf.initialize_all_variables().run()
+      # tf.initialize_all_variables().run()
 
       self.correct_prediction = tf.argmax(self.z, 1)
 
-    def train(self, data):
+      self.saver = tf.train.Saver(max_to_keep=self.max_to_keep)
+
+    def train(self, data, epch_num=0):
       source_data, source_loc_data, target_data, target_label= data
       N = int(math.ceil(len(source_data) / self.batch_size))
       cost = 0
@@ -135,6 +143,8 @@ class MemN2N(object):
       target = np.zeros([self.batch_size], dtype=np.int32) 
       context = np.ndarray([self.batch_size, self.mem_size], dtype=np.int32)
       mask = np.ndarray([self.batch_size, self.mem_size])
+
+
       
       if self.show:
         from utils import ProgressBar
@@ -168,8 +178,9 @@ class MemN2N(object):
                                                 self.target: target,
                                                 self.context: context,
                                                 self.mask: mask})
-        
-        
+
+        if self.step % self.save_step == 0:
+          self.saver.save(sess, os.path.join(self.model_dir, 'model.ckpt'), global_step=self.step)
        
         if idx%500 == 0:
             print "loss - ", loss
@@ -231,15 +242,76 @@ class MemN2N(object):
 
       return cost, acc/float(len(source_data))
 
+    def predict(self, data):
+      source_data, source_loc_data, target_data, target_label = data
+      N = int(math.ceil(len(source_data) / self.batch_size))
+      cost = 0
+
+      x = np.ndarray([self.batch_size, 1], dtype=np.int32)
+      time = np.ndarray([self.batch_size, self.mem_size], dtype=np.int32)
+      target = np.zeros([self.batch_size], dtype=np.int32) 
+      context = np.ndarray([self.batch_size, self.mem_size], dtype=np.int32)
+      mask = np.ndarray([self.batch_size, self.mem_size])
+
+      context.fill(self.pad_idx)
+
+      all_predictions = []
+
+      m, acc = 0, 0
+      for i in xrange(N):
+        target.fill(0)
+        time.fill(self.mem_size)
+        context.fill(self.pad_idx)
+        mask.fill(-1.0*np.inf)
+        
+        raw_labels = []
+        for b in xrange(self.batch_size):
+          x[b][0] = target_data[m]
+          target[b] = target_label[m]
+          time[b,:len(source_loc_data[m])] = source_loc_data[m]
+          context[b,:len(source_data[m])] = source_data[m]
+          mask[b,:len(source_data[m])].fill(0)
+          raw_labels.append(target_label[m])
+          m += 1
+
+        predictions = self.sess.run(self.correct_prediction, feed_dict={self.input: x,
+                                                     self.time: time,
+                                                     self.target: target,
+                                                     self.context: context,
+                                                     self.mask: mask})
+
+        all_predictions.extend(predictions)
+
+      return all_predictions
+
     def run(self, train_data, test_data):
       print('training...')
+      self.sess.run([tf.global_variables_initializer(), ,tf.tables_initializer()])
       self.sess.run(self.A.assign(self.pre_trained_context_wt))
       self.sess.run(self.ASP.assign(self.pre_trained_target_wt))
 
       for idx in xrange(self.nepoch):
         print('epoch '+str(idx)+'...')
-        train_loss, train_acc = self.train(train_data)
+        train_loss, train_acc = self.train(train_data, epch_num=idx)
         test_loss, test_acc = self.test(test_data)
         print('train-loss=%.2f;train-acc=%.2f;test-acc=%.2f;' % (train_loss, train_acc, test_acc))
         self.log_loss.append([train_loss, test_loss])
+
+
+    def run_prediction(self, data, ckpt_name, output_path):
+      print('predicting...')
+      self.sess.run([tf.global_variables_initializer(), ,tf.tables_initializer()])
+      self.sess.run(self.A.assign(self.pre_trained_context_wt))
+      self.sess.run(self.ASP.assign(self.pre_trained_target_wt))
+
+      ckpt_path = os.path.join(self.model_dir, ckpt_name)
+      self.saver.restore(self.sess, ckpt_path)
+      
+      predictions = self.predict(data)
+      with open(output_path, 'w') as f:
+        for p in predictions:
+          f.write(str(p))
+          f.write('\n')
+
+
         
