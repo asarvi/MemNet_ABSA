@@ -63,7 +63,7 @@ def main(_):
     model.build_model()
     with tf.Session() as sess:
       model.sess = sess
-      model.predict(data, FLAGS.ckpt_name, FLAGS.output_path)  
+      model.run_prediction(data, FLAGS.ckpt_name, FLAGS.output_path)  
 
 if __name__ == '__main__':
   tf.app.run()  
