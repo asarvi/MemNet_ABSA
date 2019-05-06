@@ -10,11 +10,11 @@ pp = pprint.PrettyPrinter()
 
 flags = tf.app.flags
 
-flags.DEFINE_integer("edim", 300, "internal state dimension [300]")
-flags.DEFINE_integer("lindim", 300, "linear part of the state [75]")
+flags.DEFINE_integer("edim", 30, "internal state dimension [30]")
+flags.DEFINE_integer("lindim", 30, "linear part of the state [75]")
 flags.DEFINE_integer("nhop", 3, "number of hops [7]")
 flags.DEFINE_integer("batch_size", 1, "batch size to use during training [128]")
-flags.DEFINE_integer("nepoch", 300, "number of epoch to use during training [100]")
+flags.DEFINE_integer("nepoch", 30, "number of epoch to use during training [10]")
 flags.DEFINE_float("init_lr", 0.01, "initial learning rate [0.01]")
 flags.DEFINE_float("init_hid", 0.1, "initial internal state value [0.1]")
 flags.DEFINE_float("init_std", 0.01, "weight initialization std [0.05]")
@@ -24,7 +24,7 @@ flags.DEFINE_string("train_data", "data/Laptops_Train.xml.seg", "train gold data
 flags.DEFINE_string("test_data", "data/Laptops_Test_Gold.xml.seg", "test gold data set path [./data/Laptops_Test_Gold.xml.seg]")
 flags.DEFINE_boolean("show", False, "print progress [False]")
 flags.DEFINE_string("model_dir", 'trained_model',"")
-flags.DEFINE_integer("save_steps", 1000, "")
+flags.DEFINE_integer("save_steps", 100, "")
 flags.DEFINE_integer("max_ckpt_to_keep", 100, "")
 flags.DEFINE_integer("pad_idx", 0, "")
 flags.DEFINE_integer("nwords", 0, "")
