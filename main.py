@@ -60,12 +60,12 @@ def main(_):
   
   pre_trained_context_wt, pre_trained_target_wt = get_embedding_matrix(embeddings, source_word2idx,  target_word2idx, FLAGS.edim)
   
- # with tf.Graph().as_default():
-  #  model = MemN2N(FLAGS, None, pre_trained_context_wt, pre_trained_target_wt)
-   # model.build_model()
-   # with tf.Session() as sess:
-    #  model.sess = sess
-    #  model.run(train_data, test_data)  
+  with tf.Graph().as_default():
+    model = MemN2N(FLAGS, None, pre_trained_context_wt, pre_trained_target_wt)
+    model.build_model()
+    with tf.Session() as sess:
+      model.sess = sess
+      model.run(train_data, test_data)  
 
 if __name__ == '__main__':
   tf.app.run()  
