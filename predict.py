@@ -14,7 +14,7 @@ flags.DEFINE_integer("edim", 300, "internal state dimension [300]")
 flags.DEFINE_integer("lindim", 300, "linear part of the state [75]")
 flags.DEFINE_integer("nhop", 3, "number of hops [7]")
 flags.DEFINE_integer("batch_size", 1, "batch size to use during training [128]")
-flags.DEFINE_integer("nepoch", 300, "number of epoch to use during training [100]")
+flags.DEFINE_integer("nepoch", 30, "number of epoch to use during training [100]")
 flags.DEFINE_float("init_lr", 0.01, "initial learning rate [0.01]")
 flags.DEFINE_float("init_hid", 0.1, "initial internal state value [0.1]")
 flags.DEFINE_float("init_std", 0.01, "weight initialization std [0.05]")
@@ -60,7 +60,7 @@ def main(_):
   print('loading pre-trained word vectors for train and test data')
   
   pre_trained_context_wt, pre_trained_target_wt = get_embedding_matrix(embeddings, source_word2idx,  target_word2idx, FLAGS.edim)
-  
+
   with tf.Graph().as_default():
     model = MemN2N(FLAGS, None, pre_trained_context_wt, pre_trained_target_wt)
     model.build_model()
